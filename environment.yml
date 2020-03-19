@@ -2,12 +2,8 @@ name: coronaIndia
 channels:
   - conda-forge
 dependencies:
-  - bqplot
-  - ipyvolume
-  - scipy
   - geojson
   - geopy
-  - geopandas
   - ipyleaflet>=0.11.1
   - ipympl
   - voila

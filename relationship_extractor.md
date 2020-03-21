@@ -46,7 +46,7 @@ curl --header "Content-Type: application/json" --request POST --data '{"patients
 
 Python Example Request : 
 
-```
+```python
 import requests
 
 headers = {

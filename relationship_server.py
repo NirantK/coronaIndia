@@ -42,7 +42,7 @@ def get_rel(token):
 
 def get_relationship(sent):
     if not sent:
-        return
+        return []
     s = re.sub(r"[^\w\s]", " ", sent)
     doc = nlp(s)
     ids = []
@@ -59,7 +59,7 @@ def get_relationship(sent):
 
 def get_travel_place(sent):
     if not sent:
-        return
+        return []
     s = re.sub(r"[^\w\s]", " ", sent)
     doc = nlp(s)
     travel = []
@@ -71,7 +71,7 @@ def get_travel_place(sent):
 
 def get_nationality(sent):
     if not sent:
-        return
+        return []
     s = re.sub(r"[^\w\s]", " ", sent)
     doc = nlp(s)
     nat = []

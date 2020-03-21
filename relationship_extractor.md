@@ -43,6 +43,21 @@ Example request :
 ```
 curl --header "Content-Type: application/json" --request POST --data '{"patients":[{"patientId":"1","notes":"Student from Wuhan, recovery confirmed on 14 Feb"},{"patientId":"2","notes":"Family members of P4"},{"patientId":"3","notes":"Travel from Italy on 29/02/2020 through Doha"}]}' http://coronatravelhistory.pythonanywhere.com/
 ```
+
+Python Example Request : 
+
+```
+import requests
+
+headers = {
+    'Content-Type': 'application/json',
+}
+
+data = '{"patients":[{"patientId":"1","notes":"Student from Wuhan, recovery confirmed on 14 Feb"},{"patientId":"2","notes":"Family members of P4"},{"patientId":"3","notes":"Travel from Italy on 29/02/2020 through Doha"}]}'
+
+response = requests.post('http://coronatravelhistory.pythonanywhere.com/', headers=headers, data=data)
+
+```
 Input Data Example : 
 ```
 {

@@ -13,7 +13,7 @@ What doesn't work : Relationship without word `of`
 ```
 "Friend: P12"
 "Friends with P12"
-"Wife of p12"
+"Wife of p12" #Expected P12 (throws error with small p)
 ```
 
 ## Travel Places

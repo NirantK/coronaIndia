@@ -103,7 +103,7 @@ def extract_foreign(sent):
     is_foreign = []
     for ent in doc.ents:
         if ent.label_ == "GPE":
-            is_foreign.append(not (ent.text in l))
+            is_foreign.append(not(ent.text in l))
     return is_foreign
 
 

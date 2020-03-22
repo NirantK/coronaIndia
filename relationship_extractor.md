@@ -71,7 +71,7 @@ Input Data Example :
     "patients": [
         {
             "patientId": "1",
-            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
+            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend of P12"
         }
     ]
 }
@@ -95,7 +95,12 @@ Returns :
                     {
                         "link": "Family Member",
                         "with": [
-                            "P13",
+                            "P13"
+                        ]
+                    },
+                    {
+                        "link": "Friend",
+                        "with": [
                             "P12"
                         ]
                     }

@@ -1,0 +1,9 @@
+python-geohash
+geopandas
+geopatra
+openlocationcode
+osm2geojson
+bqplot
+ipympl
+ipyvolume
+scipy

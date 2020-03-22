@@ -1,0 +1,12 @@
+name: coronaIndia
+channels:
+  - conda-forge
+dependencies:
+  - geojson
+  - geopy
+  - ipyleaflet>=0.11.1
+  - ipympl
+  - voila
+  - pip
+  - pip:
+    - "-r requirements.txt"

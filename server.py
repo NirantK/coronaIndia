@@ -1,6 +1,6 @@
-from flask import Flask, request, Response
-from relationships import get_nationality, get_travel_place
-from relationships import get_relationship, record_processor
+from flask import Flask, request, jsonify
+from relationships import get_nationality, get_travel_place, get_relationship
+import functools
 
 app = Flask(__name__)
 
@@ -14,14 +14,21 @@ def record_processor(sent):
 
 
 def process_records(records):
-    return {
-        "patients": [
+    return [
             {r["patientId"]: record_processor(r["notes"])} for r in records["patients"]
         ]
-    }
 
 
 @app.route("/", methods=["POST"])
 def single():
-    req_data = request.get_json()
-    return process_records(req_data)
+    try:
+        req_data = request.get_json()
+        results = process_records(req_data)
+    except TypeError:
+		# abort when not JSON
+        abort(400)
+    except KeyError:
+        # return error when no org paramter
+        return jsonify(error="Not the correct request format!")
+
+    return jsonify(patients=results)

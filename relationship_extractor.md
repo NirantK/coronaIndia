@@ -57,19 +57,7 @@ data = '{
     "patients": [
         {
             "patientId": "1",
-            "notes": "Travelled from Italy, Family Member of P13"
-        },
-        {
-            "patientId": "2",
-            "notes": "Travelled to Pune, Friend of P13, P14, P12"
-        },
-        {
-            "patientId": "2",
-            "notes": "Friend and Family of P15, son of P14"
-        },
-        {
-            "patientId": "1",
-            "notes": "Indian Student from Wuhan"
+            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
         }
     ]
 }'
@@ -83,19 +71,7 @@ Input Data Example :
     "patients": [
         {
             "patientId": "1",
-            "notes": "Travelled from Italy, Family Member of P13"
-        },
-        {
-            "patientId": "2",
-            "notes": "Travelled to Pune, Friend of P13, P14, P12"
-        },
-        {
-            "patientId": "2",
-            "notes": "Friend and Family of P15, son of P14"
-        },
-        {
-            "patientId": "1",
-            "notes": "Indian Student from Wuhan"
+            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
         }
     ]
 }
@@ -106,72 +82,26 @@ Returns :
     "patients": [
         {
             "1": {
-                "is_foreign": [
-                    true
+                "nationality": [
+                    "Indian"
                 ],
-                "nationality": [],
+                "place_attributes": [
+                    {
+                        "is_foreign": true,
+                        "place": "Italy"
+                    }
+                ],
                 "relationship": [
                     {
                         "link": "Family Member",
                         "with": [
-                            "P13"
+                            "P13",
+                            "P12"
                         ]
                     }
                 ],
                 "travel": [
                     "Italy"
-                ]
-            }
-        },
-        {
-            "2": {
-                "is_foreign": [],
-                "nationality": [],
-                "relationship": [
-                    {
-                        "link": "Friend",
-                        "with": [
-                            "P13",
-                            "P14",
-                            "P12"
-                        ]
-                    }
-                ],
-                "travel": []
-            }
-        },
-        {
-            "2": {
-                "is_foreign": [],
-                "nationality": [],
-                "relationship": [
-                    {
-                        "link": "Friend and Family",
-                        "with": [
-                            "P15"
-                        ]
-                    },
-                    {
-                        "link": "son",
-                        "with": [
-                            "P14"
-                        ]
-                    }
-                ],
-                "travel": []
-            }
-        },
-        {
-            "1": {
-                "is_foreign": [
-                    true
-                ],
-                "nationality": [
-                    "Indian"
-                ],
-                "relationship": [],
-                "travel": [
-                    "Wuhan"
                 ]
             }
         }

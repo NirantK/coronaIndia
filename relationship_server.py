@@ -132,9 +132,18 @@ def process_records(records):
 
 @app.route("/", methods=["POST"])
 def single():
-    req_data = request.get_json()
+    try:
+        req_data = request.get_json()
+        results = process_records(req_data)
+    except TypeError:
+        # abort when not JSON
+        abort(400)
+    except KeyError:
+        # return error when no org paramter
+        return jsonify(error="Not the correct request format!")
+
     print(f"Input : {req_data}")
-    return process_records(req_data)
+    return results
 
 
 app.run()

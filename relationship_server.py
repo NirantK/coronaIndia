@@ -6,9 +6,24 @@ import functools
 import re
 from flask import Response
 import json
+import urllib.request
+import logging
 
 # [{ patientId : '', notes : ""}, {}...]
 nlp = spacy.load("en_core_web_sm")
+
+with urllib.request.urlopen(
+    "https://raw.githubusercontent.com/bhanuc/indian-list/master/state-city.json"
+) as url:
+    state_city = json.loads(url.read().decode())
+
+
+l = ["India", "Mumbai"]
+for k, v in state_city.items():
+    l.append(k)
+    l = l + v
+
+l = [ele.replace("*", "") for ele in l]
 
 
 def get_travel_status(span):
@@ -40,11 +55,7 @@ def get_rel(token):
             return prev_token.text
 
 
-def get_relationship(sent):
-    if not sent:
-        return []
-    s = re.sub(r"[^\w\s]", " ", sent)
-    doc = nlp(s)
+def extract_relationship(doc):
     ids = []
     output = []
     for tok in doc:
@@ -57,11 +68,7 @@ def get_relationship(sent):
     return output
 
 
-def get_travel_place(sent):
-    if not sent:
-        return []
-    s = re.sub(r"[^\w\s]", " ", sent)
-    doc = nlp(s)
+def extract_travel_place(doc):
     travel = []
     for ent in doc.ents:
         if ent._.travel_status:
@@ -69,16 +76,20 @@ def get_travel_place(sent):
     return travel
 
 
-def get_nationality(sent):
-    if not sent:
-        return []
-    s = re.sub(r"[^\w\s]", " ", sent)
-    doc = nlp(s)
+def extract_nationality(doc):
     nat = []
     for ent in doc.ents:
         if ent._.nationality:
             nat.append(ent._.nationality)
     return nat
+
+
+def extract_foreign(doc):
+    is_foreign = []
+    for ent in doc.ents:
+        if ent.label_ == "GPE":
+            is_foreign.append({"place": ent.text, "is_foreign":not(ent.text in l)})
+    return is_foreign
 
 
 Span.set_extension("travel_status", getter=get_travel_status, force=True)
@@ -90,22 +101,40 @@ app = Flask(__name__)
 
 @functools.lru_cache(30000)
 def record_processor(sent):
+    if not sent:
+        return {
+                "nationality": [],
+                "travel": [],
+                "relationship": [],
+                "place_attributes": [],
+            }
+    s = re.sub(r"[^\w\s]", " ", sent)
+    doc = nlp(s)
     return {
-        "nationality": get_nationality(sent),
-        "travel": get_travel_place(sent),
-        "relationship": get_relationship(sent),
+        "nationality": extract_nationality(doc),
+        "travel": extract_travel_place(doc),
+        "relationship": extract_relationship(doc),
+        "place_attributes": extract_foreign(doc),
     }
 
 
 def process_records(records):
+    history = []
+    for r in records["patients"]:
+        history.append({r["patientId"]: record_processor(r["notes"])})
+        print(f"Output : {r['patientId']}: {record_processor(r['notes'])}")
+
+
     return {
-        "patients": [
-            {r["patientId"]: record_processor(r["notes"])} for r in records["patients"]
-        ]
+        "patients": history
     }
 
 
 @app.route("/", methods=["POST"])
 def single():
     req_data = request.get_json()
+    print(f"Input : {req_data}")
     return process_records(req_data)
+
+
+app.run()

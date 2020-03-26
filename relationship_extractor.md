@@ -41,19 +41,26 @@ API URL : http://coronatravelhistory.pythonanywhere.com/
 
 Example request :
 ```
-curl --header "Content-Type: application/json" --request POST --data '{"patients":[{"patientId":"1","notes":"Student from Wuhan, recovery confirmed on 14 Feb"},{"patientId":"2","notes":"Family members of P4"},{"patientId":"3","notes":"Travel from Italy on 29/02/2020 through Doha"}]}' http://coronatravelhistory.pythonanywhere.com/
+curl --header "Content-Type: application/json" --request POST --data '{"patients":[{"patientId":"1","notes":"Travelled from Italy"}]}' http://coronatravelhistory.pythonanywhere.com/
 ```
 
 Python Example Request : 
 
-```python
+```
 import requests
 
 headers = {
     'Content-Type': 'application/json',
 }
 
-data = '{"patients":[{"patientId":"1","notes":"Student from Wuhan, recovery confirmed on 14 Feb"},{"patientId":"2","notes":"Family members of P4"},{"patientId":"3","notes":"Travel from Italy on 29/02/2020 through Doha"}]}'
+data = '{
+    "patients": [
+        {
+            "patientId": "1",
+            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
+        }
+    ]
+}'
 
 response = requests.post('http://coronatravelhistory.pythonanywhere.com/', headers=headers, data=data)
 
@@ -61,60 +68,48 @@ response = requests.post('http://coronatravelhistory.pythonanywhere.com/', heade
 Input Data Example : 
 ```
 {
-   "patients":[
-      {
-         "patientId":"1",
-         "notes":"Student from Wuhan, recovery confirmed on 14 Feb"
-      },
-      {
-         "patientId":"2",
-         "notes":"Family members of P4 and Friend with P2"
-      },
-      {
-         "patientId":"3",
-         "notes":"Travel from Italy on 29/02/2020 through Doha"
-      }
-   ]
+    "patients": [
+        {
+            "patientId": "1",
+            "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend of P12"
+        }
+    ]
 }
 ```
 Returns : 
 ```
 {
-   "patients":[
-      {
-         "1":{
-            "nationality":[
-
-            ],
-            "relationship":[],
-            "travel":[
-               "Wuhan"
-            ]
-         }
-      },
-      {
-         "2":{
-            "nationality":[
-
-            ],
-            "relationship":[{"link": "Family Member", "with": "P4"}, {"link" : "Friend", "with": P2}],
-            "travel":[
-
-            ]
-         }
-      },
-      {
-         "3":{
-            "nationality":[
-
-            ],
-            "relationship":[],
-            "travel":[
-               "Italy",
-               "Doha"
-            ]
-         }
-      }
-   ]
+    "patients": [
+        {
+            "1": {
+                "nationality": [
+                    "Indian"
+                ],
+                "place_attributes": [
+                    {
+                        "is_foreign": true,
+                        "place": "Italy"
+                    }
+                ],
+                "relationship": [
+                    {
+                        "link": "Family Member",
+                        "with": [
+                            "P13"
+                        ]
+                    },
+                    {
+                        "link": "Friend",
+                        "with": [
+                            "P12"
+                        ]
+                    }
+                ],
+                "travel": [
+                    "Italy"
+                ]
+            }
+        }
+    ]
 }
 ```

@@ -1,13 +1,13 @@
-from flask import Flask, request
 import spacy
 from spacy.tokens import Span
 from spacy.tokens import Token
 import functools
 import re
-from flask import Response
 import json
 import urllib.request
 import logging
+from fastapi import FastAPI
+from schema import PatientList
 
 # [{ patientId : '', notes : ""}, {}...]
 nlp = spacy.load("en_core_web_sm")
@@ -96,8 +96,7 @@ Span.set_extension("travel_status", getter=get_travel_status, force=True)
 Span.set_extension("nationality", getter=get_nat, force=True)
 Token.set_extension("relationship", getter=get_rel, force=True)
 
-app = Flask(__name__)
-
+app = FastAPI()
 
 @functools.lru_cache(30000)
 def record_processor(sent):
@@ -120,21 +119,19 @@ def record_processor(sent):
 
 def process_records(records):
     history = []
-    for r in records["patients"]:
-        history.append({r["patientId"]: record_processor(r["notes"])})
-        print(f"Output : {r['patientId']}: {record_processor(r['notes'])}")
-
+    for r in records.patients:
+        history.append({r.patientId: record_processor(r.notes)})
+        print(f"Output : {r.patientId}: {record_processor(r.notes)}")
 
     return {
         "patients": history
     }
 
 
-@app.route("/", methods=["POST"])
-def single():
+@app.post("/")
+def single(patients: PatientList):
     try:
-        req_data = request.get_json()
-        results = process_records(req_data)
+        results = process_records(patients)
     except TypeError:
         # abort when not JSON
         abort(400)
@@ -142,8 +139,11 @@ def single():
         # return error when no org paramter
         return jsonify(error="Not the correct request format!")
 
-    print(f"Input : {req_data}")
+    print(f"Input : {patients}")
     return results
 
-
-app.run()
+@app.get("/status/")
+def status():
+    return {
+        "status": "alive"
+    }

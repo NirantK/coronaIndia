@@ -1,10 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, Response, jsonify, abort
 import spacy
 from spacy.tokens import Span
 from spacy.tokens import Token
 import functools
 import re
-from flask import Response
 import json
 import urllib.request
 import logging

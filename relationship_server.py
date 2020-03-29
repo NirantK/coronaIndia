@@ -8,7 +8,7 @@ import json
 import urllib.request
 import logging
 
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 
 logger = logging.getLogger(__name__)
 with urllib.request.urlopen(

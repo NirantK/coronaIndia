@@ -5,7 +5,16 @@ with open("/home/meghanabhange/mysite/prefered_labels.txt", "r") as f:
     prefered_labels = f.readlines()
 
 
-def correct_text(text):
+def correct_text(text: str)->str:
+    """[summary]
+    
+    Arguments:
+        text {str} -- [Input label for the name]
+    
+    Returns:
+        str -- closest fuzzy string match to the input if 
+            fuzz.ratio is greater than 85 else the same input str
+    """
     if not text:
         return
     output = {}

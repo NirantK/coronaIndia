@@ -1,7 +1,8 @@
 from flask import Flask, Response, abort, jsonify, request
 from fuzzywuzzy import process
+from pathlib import Path
 
-with open("/home/meghanabhange/mysite/prefered_labels.txt", "r") as f:
+with open(Path("prefered_labels.txt").resolve(), "r") as f:
     prefered_labels = f.readlines()
 
 
@@ -52,3 +53,5 @@ def correct_city_name():
         # return error when no org paramter
         return jsonify(error="Not the correct request format!")
     return jsonify(results)
+
+app.run()

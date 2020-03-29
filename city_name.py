@@ -1,12 +1,13 @@
+from pathlib import Path
+
 from flask import Flask, Response, abort, jsonify, request
 from fuzzywuzzy import process
-from pathlib import Path
 
 with open(Path("prefered_labels.txt").resolve(), "r") as f:
     prefered_labels = f.readlines()
 
 
-def correct_text(text: str)->str:
+def correct_text(text: str) -> str:
     """[summary]
     
     Arguments:
@@ -53,5 +54,6 @@ def correct_city_name():
         # return error when no org paramter
         return jsonify(error="Not the correct request format!")
     return jsonify(results)
+
 
 app.run()

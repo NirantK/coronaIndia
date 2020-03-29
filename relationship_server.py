@@ -7,8 +7,10 @@ import re
 import json
 import urllib.request
 import logging
+
 nlp = spacy.load("en_core_web_sm")
 
+logger = logging.getLogger(__name__)
 with urllib.request.urlopen(
     "https://raw.githubusercontent.com/bhanuc/indian-list/master/state-city.json"
 ) as url:
@@ -147,3 +149,6 @@ def single():
         logger.info(f"Error Data : {req_data}")
         return jsonify(error="Not the correct request format!")
     return results
+
+
+app.run()

@@ -1,17 +1,16 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify, abort
 import spacy
 from spacy.tokens import Span
 from spacy.tokens import Token
 import functools
 import re
-from flask import Response
 import json
 import urllib.request
 import logging
 
-# [{ patientId : '', notes : ""}, {}...]
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 
+logger = logging.getLogger(__name__)
 with urllib.request.urlopen(
     "https://raw.githubusercontent.com/bhanuc/indian-list/master/state-city.json"
 ) as url:
@@ -33,7 +32,7 @@ def get_travel_status(span):
             return "from"
         elif prev_token.text in ("to", "and"):
             return "to"
-        return "to"
+        return None
 
 
 def get_nat(span):
@@ -87,8 +86,8 @@ def extract_nationality(doc):
 def extract_foreign(doc):
     is_foreign = []
     for ent in doc.ents:
-        if ent.label_ == "GPE":
-            is_foreign.append({"place": ent.text, "is_foreign":not(ent.text in l)})
+        if ent._.travel_status:
+            is_foreign.append({"place": ent.text, "is_foreign": not (ent.text in l)})
     return is_foreign
 
 
@@ -98,16 +97,19 @@ Token.set_extension("relationship", getter=get_rel, force=True)
 
 app = Flask(__name__)
 
+default_result = {
+    "nationality": [],
+    "travel": [],
+    "relationship": [],
+    "place_attributes": [],
+}
+
 
 @functools.lru_cache(30000)
 def record_processor(sent):
+    logger.info(f"Travel Input: {sent}")
     if not sent:
-        return {
-                "nationality": [],
-                "travel": [],
-                "relationship": [],
-                "place_attributes": [],
-            }
+        return default_result
     s = re.sub(r"[^\w\s]", " ", sent)
     doc = nlp(s)
     return {
@@ -121,20 +123,32 @@ def record_processor(sent):
 def process_records(records):
     history = []
     for r in records["patients"]:
-        history.append({r["patientId"]: record_processor(r["notes"])})
-        print(f"Output : {r['patientId']}: {record_processor(r['notes'])}")
+        if not ("notes" in r.keys()):
+            history.append(default_result)
+            logger.info(f"ಥ_ಥ Missing Notes")
+        else:
+            history.append({r["patientId"]: record_processor(r["notes"])})
+            logger.info(
+                f"Travel Output : {r['patientId']}: {record_processor(r['notes'])}"
+            )
 
-
-    return {
-        "patients": history
-    }
+    return {"patients": history}
 
 
 @app.route("/", methods=["POST"])
 def single():
-    req_data = request.get_json()
-    print(f"Input : {req_data}")
-    return process_records(req_data)
+    try:
+        req_data = request.get_json()
+        results = process_records(req_data)
+    except TypeError:
+        logger.info(f"ಠ~ಠ TypeError Aborting")
+        logger.info(f"Error Data : {req_data}")
+        abort(400)
+    except KeyError:
+        logger.info(f"ಠ╭╮ಠ KeyError Aborting")
+        logger.info(f"Error Data : {req_data}")
+        return jsonify(error="Not the correct request format!")
+    return results
 
 
 app.run()

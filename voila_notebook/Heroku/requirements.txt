@@ -1,0 +1,8 @@
+voila
+voila-material
+bqplot
+folium
+geopatra
+pandas
+geopandas
+ipywidgets

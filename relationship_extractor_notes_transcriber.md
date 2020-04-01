@@ -1,3 +1,7 @@
+# Why?
+Need something to transcribe notes written by volunteers into machine readable fields like `is_foreign` (set as `True` or `False`).
+
+
 # What works for relationship extraction API
 
 ## Relationship 
@@ -46,7 +50,7 @@ curl --header "Content-Type: application/json" --request POST --data '{"patients
 
 Python Example Request : 
 
-```
+```python
 import requests
 
 headers = {
@@ -63,10 +67,10 @@ data = '{
 }'
 
 response = requests.post('http://coronatravelhistory.pythonanywhere.com/', headers=headers, data=data)
+```
 
-```
-Input Data Example : 
-```
+Input Data Example/Input JSON Format: 
+```javascript
 {
     "patients": [
         {
@@ -76,8 +80,8 @@ Input Data Example :
     ]
 }
 ```
-Returns : 
-```
+Returns/Output JSON Format : 
+```javascript
 {
     "patients": [
         {

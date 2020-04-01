@@ -1,28 +1,28 @@
-District,CaseCount,BusCount,QTNCount
-Kalaburagi,3,6.0,4
-Kodagu,1,27.0,47
-Chikkaballapura,4,0.0,9
-Mysuru,3,19.0,231
-Dharwad,1,12.0,39
-Uttara Kannada,4,23.0,23
-Dhakshina Kannada,5,82.0,756
-Udupi,1,29.0,414
-Tumkur,1,1.0,78
-Shivamogga,0,43.0,99
-Chikkamagaluru,0,32.0,27
-Davanagere,0,28.0,58
-Ballari,0,13.0,44
-Raichur,0,12.0,41
-Belagavi,0,11.0,16
-Vijayapura,0,5.0,4
-Gadag,0,3.0,16
-Haveri,0,3.0,5
-Hassan,0,1.0,75
-Bagalkote,0,0.0,26
-"Bengaluru (Urban, Rural & BBMP)",0,0.0,7315
-Chamrajanagara,0,0.0,6
-Kolar,0,0.0,6
-Kolara,0,0.0,8
-Koppala,0,0.0,6
-Mandya,0,0.0,8
-Ramanagara,0,0.0,8
+district,CaseCount,BusCount,QTNCount
+Kalaburagi,3,6,4
+Kodagu,1,27,47
+Chikkaballapura,4,0,9
+Mysuru,3,19,231
+Dharwad,1,12,39
+Uttara Kannada,4,23,23
+Dhakshina Kannada,5,82,756
+Udupi,1,29,414
+Tumkur,1,1,78
+Shivamogga,0,43,99
+Chikkamagaluru,0,32,27
+Davanagere,0,28,58
+Ballari,0,13,44
+Raichur,0,12,41
+Belagavi,0,11,16
+Vijayapura,0,5,4
+Gadag,0,3,16
+Haveri,0,3,5
+Hassan,0,1,75
+Bagalkote,0,0,26
+"Bengaluru (Urban, Rural & BBMP)",0,0,7315
+Chamrajanagara,0,0,6
+Kolar,0,0,6
+Kolara,0,0,8
+Koppala,0,0,6
+Mandya,0,0,8
+Ramanagara,0,0,8

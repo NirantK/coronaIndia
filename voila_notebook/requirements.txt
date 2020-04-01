@@ -1,0 +1,11 @@
+voila
+voila-material
+bqplot
+folium
+pandas
+geopandas
+geopatra
+ipywidgets
+xlrd
+lxml
+seirsplus

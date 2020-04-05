@@ -5,23 +5,22 @@ import os
 if not os.path.isdir("Sheets"):
     os.mkdir('Sheets')
 
+# Add the sheet name that you want to geocode here.
 xlsx_name = "ReportedTravel.xlsx"
+
 temp = pd.ExcelFile(xlsx_name)
 sheet_names = temp.sheet_names
 
-last_index = sheet_names.index("Jorhat")
-
-print(len(sheet_names),last_index)
-sheet_names = sheet_names[last_index+1:]
-print(len(sheet_names))
-
-gmaps = googlemaps.Client(key=' --- ')
+gmaps = googlemaps.Client(key=' --- Add API Key here --- ')
 
 total_xlsx_count = 0
 total_none_count = 0
 
 for sheet_name in sheet_names:
     df = pd.read_excel(xlsx_name, sheet_name=sheet_name)
+    
+    # If you have another column that is to be used to geocode - enter that
+    # inplace of 'Address'
     addresses = df['Address'].tolist()
     count = 0
     total_count = 0

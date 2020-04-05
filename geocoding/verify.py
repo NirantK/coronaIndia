@@ -1,3 +1,8 @@
+'''
+A script to verify the total rows that were geocoded.
+Will also output the number of rows that could not be geocoded
+'''
+
 import pandas as pd
 
 xlsx_name = "ReportedTravel.xlsx"

@@ -1,8 +1,3 @@
-'''
-A script to verify the total rows that were geocoded.
-Will also output the number of rows that could not be geocoded
-'''
-
 import pandas as pd
 
 xlsx_name = "ReportedTravel.xlsx"
@@ -15,6 +10,8 @@ nones = 0
 for sheet_name in sheet_names:
     df = pd.read_csv(f"Sheets/{sheet_name}.csv")
     total += len(df)
-    nones += len(df) - df['Latitude'].count()
+    nones += len(df) - df["Latitude"].count()
+    if len(set(df["geocoded"].tolist())) > 1:
+        print(f"Sheet - {sheet_name} was not geocoded completey.")
 
 print(total, nones)

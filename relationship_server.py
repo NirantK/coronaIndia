@@ -15,7 +15,14 @@ logger = logging.getLogger(__name__)
 
 def make_dict_lowercase(d):
     """
-        Utliity method to convert keys and values in a dictionary to lowercase.
+        Utliity method to convert keys and values in a dictionary `d` to lowercase.
+
+        Args:
+            `d` (:obj:`dict`): dictionary whose key and values have to be converted into lowercase
+        
+        Returns:
+            `lower_case_dict` that is a copy of `d` but with the key and value converted to lowercase
+            
     """
     lower_case_dict = dict()
     for k in d.keys():
@@ -23,21 +30,21 @@ def make_dict_lowercase(d):
     return lower_case_dict
 
 
-def to_title_case(string):
-    """
-        Utility to convert string to Title Case
-        Input: this is a sentence.
-        Output: This Is A Sentence.
-    """
-    return " ".join(w.capitalize() for w in string.split(" "))
-
-
 def load_country_acryonym_json(
     download_url: str = "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json",
 ) -> None:
+
     """
-        Loading JSON that has alias / acronym : country name mapping.
+        Loading JSON that has alias / acronym to country name mapping.
+
+        Args:
+            download_url (:obj:`str`, optional): The URL from where the .json containing the alias-to-country mapping can be fetched. 
+
+        Returns:
+            json converted to :obj:`dict` if the `download_url` could be fetched and read, None otherwise.
+
     """
+
     with urllib.request.urlopen(download_url) as url:
         return json.loads(url.read().decode()) if url.getcode() == 200 else {}
 
@@ -47,10 +54,17 @@ country_acronym_lookup = make_dict_lowercase(load_country_acryonym_json())
 
 def acronym_to_country(acronym):
     """
-        Retrieve country name from acronym using @country_acronym_lookup as reference
+        Retrieve country name from `acronym` using `country_acronym_lookup` as reference
+
+        Args:
+            acryonym (:obj:`str`): acronym for which a country has to be searched
+        
+        Returns:
+            str: the `country`  mapped to `acronym` if such a mapping is found.
+                 the `acronym` if no mapping is found
     """
     country = country_acronym_lookup.get(acronym.lower())
-    return to_title_case(country) if country != None else to_title_case(acronym)
+    return country.title() if country != None else acronym.title()
 
 
 with urllib.request.urlopen(

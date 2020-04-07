@@ -13,51 +13,44 @@ nlp = spacy.load("en_core_web_lg")
 logger = logging.getLogger(__name__)
 
 
-"""
-    Utliity method to convert keys and values in a dictionary to lowercase.
-"""
-
-
-def makeDictLowercase(d):
+def make_dict_lowercase(d):
+    """
+        Utliity method to convert keys and values in a dictionary to lowercase.
+    """
     lowerCaseDict = dict()
     for k in d.keys():
         lowerCaseDict[k.lower()] = d[k].lower()
     return lowerCaseDict
 
 
-"""
-    Utility to convert string to Title Case
-    Input: this is a sentence.
-    Output: This Is A Sentence.
-"""
-
-
-def toTitleCase(string):
+def to_title_case(string):
+    """
+        Utility to convert string to Title Case
+        Input: this is a sentence.
+        Output: This Is A Sentence.
+    """
     return " ".join(w.capitalize() for w in string.split(" "))
 
 
-"""
-    Loading JSON that has alias / acronym : country name mapping.
-"""
-
-
-def loadCountryAcronymJson():
+def load_country_acryonym_json():
+    """
+        Loading JSON that has alias / acronym : country name mapping.
+    """
     with urllib.request.urlopen(
         "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json"
     ) as url:
         return json.loads(url.read().decode()) if url.getcode() == 200 else {}
 
 
-countryAcronymLookup = makeDictLowercase(loadCountryAcronymJson())
-
-"""
-   Retrieve country name from acronym using @countryAcronymlookup as reference
-"""
+country_acronym_lookup = make_dict_lowercase(load_country_acryonym_json())
 
 
 def acronymToCountry(acronym):
-    country = countryAcronymLookup.get(acronym.lower())
-    return toTitleCase(country) if country != None else toTitleCase(acronym)
+    """
+        Retrieve country name from acronym using @country_acronym_lookup as reference
+    """
+    country = country_acronym_lookup.get(acronym.lower())
+    return to_title_case(country) if country != None else to_title_case(acronym)
 
 
 with urllib.request.urlopen(

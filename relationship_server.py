@@ -17,10 +17,10 @@ def make_dict_lowercase(d):
     """
         Utliity method to convert keys and values in a dictionary to lowercase.
     """
-    lowerCaseDict = dict()
+    lower_case_dict = dict()
     for k in d.keys():
-        lowerCaseDict[k.lower()] = d[k].lower()
-    return lowerCaseDict
+        lower_case_dict[k.lower()] = d[k].lower()
+    return lower_case_dict
 
 
 def to_title_case(string):
@@ -32,20 +32,20 @@ def to_title_case(string):
     return " ".join(w.capitalize() for w in string.split(" "))
 
 
-def load_country_acryonym_json():
+def load_country_acryonym_json(
+    download_url: str = "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json",
+) -> None:
     """
         Loading JSON that has alias / acronym : country name mapping.
     """
-    with urllib.request.urlopen(
-        "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json"
-    ) as url:
+    with urllib.request.urlopen(download_url) as url:
         return json.loads(url.read().decode()) if url.getcode() == 200 else {}
 
 
 country_acronym_lookup = make_dict_lowercase(load_country_acryonym_json())
 
 
-def acronymToCountry(acronym):
+def acronym_to_country(acronym):
     """
         Retrieve country name from acronym using @country_acronym_lookup as reference
     """
@@ -114,7 +114,7 @@ def extract_travel_place(doc):
     for ent in doc.ents:
         if ent._.travel_status:
             travel.append(ent.text)
-    return list(map(acronymToCountry, travel))
+    return list(map(acronym_to_country, travel))
 
 
 def extract_nationality(doc):
@@ -130,7 +130,7 @@ def extract_foreign(doc):
     for ent in doc.ents:
         if ent._.travel_status:
             is_foreign.append(
-                {"place": acronymToCountry(ent.text), "is_foreign": not (ent.text in l)}
+                {"place": acronym_to_country(ent.text), "is_foreign": not (ent.text in l)}
             )
     return is_foreign
 

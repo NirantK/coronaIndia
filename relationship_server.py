@@ -13,38 +13,52 @@ nlp = spacy.load("en_core_web_lg")
 logger = logging.getLogger(__name__)
 
 
-'''
+"""
     Utliity method to convert keys and values in a dictionary to lowercase.
-'''
+"""
+
+
 def makeDictLowercase(d):
     lowerCaseDict = dict()
     for k in d.keys():
         lowerCaseDict[k.lower()] = d[k].lower()
     return lowerCaseDict
 
-'''
+
+"""
     Utility to convert string to Title Case
     Input: this is a sentence.
     Output: This Is A Sentence.
-'''
+"""
+
+
 def toTitleCase(string):
     return " ".join(w.capitalize() for w in string.split(" "))
 
-'''
+
+"""
     Loading JSON that has alias / acronym : country name mapping.
-'''
+"""
+
+
 def loadCountryAcronymJson():
-    with urllib.request.urlopen("https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json") as url:
+    with urllib.request.urlopen(
+        "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json"
+    ) as url:
         return json.loads(url.read().decode()) if url.getcode() == 200 else {}
+
 
 countryAcronymLookup = makeDictLowercase(loadCountryAcronymJson())
 
-'''
+"""
    Retrieve country name from acronym using @countryAcronymlookup as reference
-'''
+"""
+
+
 def acronymToCountry(acronym):
     country = countryAcronymLookup.get(acronym.lower())
     return toTitleCase(country) if country != None else toTitleCase(acronym)
+
 
 with urllib.request.urlopen(
     "https://raw.githubusercontent.com/bhanuc/indian-list/master/state-city.json"
@@ -122,7 +136,9 @@ def extract_foreign(doc):
     is_foreign = []
     for ent in doc.ents:
         if ent._.travel_status:
-            is_foreign.append({"place": acronymToCountry(ent.text), "is_foreign": not (ent.text in l)})
+            is_foreign.append(
+                {"place": acronymToCountry(ent.text), "is_foreign": not (ent.text in l)}
+            )
     return is_foreign
 
 
@@ -183,7 +199,6 @@ def single():
         logger.info(f"Error Data : {req_data}")
         return jsonify(error="Not the correct request format!")
     return results
-
 
 
 if __name__ == "__main__":

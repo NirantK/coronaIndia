@@ -130,7 +130,10 @@ def extract_foreign(doc):
     for ent in doc.ents:
         if ent._.travel_status:
             is_foreign.append(
-                {"place": acronym_to_country(ent.text), "is_foreign": not (ent.text in l)}
+                {
+                    "place": acronym_to_country(ent.text),
+                    "is_foreign": not (ent.text in l),
+                }
             )
     return is_foreign
 

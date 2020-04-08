@@ -169,6 +169,11 @@ def test_process_records():
             }
         ]
     }
+
+
+def test_input_error_missing_notes():
+    """process_records should return default output if notes are missing.
+    """
     records = {"patients": [{"patientId": "1"}]}
     assert process_records(records) == {
         "patients": [
@@ -180,10 +185,15 @@ def test_process_records():
             }
         ]
     }
+
+
+def test_input_error_missing_patientId():
+    """process_records should throw KeyError if patientId is missing.
+    """
     records = {
         "patients": [
             {
-                "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
+                "notes": "Indian Student Travelled from Italy, Family Member of P3 Friend with P2"
             }
         ]
     }

@@ -47,13 +47,13 @@ def test_travel_acronymns():
         "nationality": [],
         "travel": ["United Kingdom"],
         "relationship": [],
-        "place_attributes": [{"place": "UK", "is_foreign": True}],
+        "place_attributes": [{"place": "United Kingdom", "is_foreign": True}],
     }
     assert record_processor("Traveled from UK") == {
         "nationality": [],
         "travel": ["United Kingdom"],
         "relationship": [],
-        "place_attributes": [{"place": "UK", "is_foreign": True}],
+        "place_attributes": [{"place": "United Kingdom", "is_foreign": True}],
     }
     assert record_processor("Traveled from US") == {
         "nationality": [],

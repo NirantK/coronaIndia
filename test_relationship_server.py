@@ -1,6 +1,6 @@
 import pytest
 
-from relationship_server import record_processor
+from relationship_server import process_records, record_processor
 
 
 def test_record_processor():
@@ -144,3 +144,50 @@ def test_relationship():
         ],
         "place_attributes": [],
     }
+
+
+def test_process_records():
+    """
+    """
+    records = {
+        "patients": [
+            {
+                "patientId": "1",
+                "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12",
+            }
+        ]
+    }
+    assert process_records(records) == {
+        "patients": [
+            {
+                "1": {
+                    "nationality": ["Indian"],
+                    "travel": ["Italy"],
+                    "relationship": [{"link": "Family Member", "with": ["P13", "P12"]}],
+                    "place_attributes": [{"place": "Italy", "is_foreign": True}],
+                }
+            }
+        ]
+    }
+    records = {"patients": [{"patientId": "1"}]}
+    assert process_records(records) == {
+        "patients": [
+            {
+                "nationality": [],
+                "travel": [],
+                "relationship": [],
+                "place_attributes": [],
+            }
+        ]
+    }
+    records = {
+        "patients": [
+            {
+                "notes": "Indian Student Travelled from Italy, Family Member of P13 Friend with P12"
+            }
+        ]
+    }
+    with pytest.raises(Exception) as excinfo:
+        process_records(records)
+    assert type(excinfo.value) == KeyError
+    assert excinfo.value.args[0] == "patientId"

@@ -11,6 +11,62 @@ import logging
 nlp = spacy.load("en_core_web_lg")
 
 logger = logging.getLogger(__name__)
+
+
+def make_dict_lowercase(d):
+    """
+        Utliity method to convert keys and values in a dictionary `d` to lowercase.
+
+        Args:
+            `d` (:obj:`dict`): dictionary whose key and values have to be converted into lowercase
+        
+        Returns:
+            `lower_case_dict` that is a copy of `d` but with the key and value converted to lowercase
+            
+    """
+    lower_case_dict = dict()
+    for k in d.keys():
+        lower_case_dict[k.lower()] = d[k].lower()
+    return lower_case_dict
+
+
+def load_country_acryonym_json(
+    download_url: str = "https://raw.githubusercontent.com/rohanrmallya/coronaIndia/master/data/countries_acronym_aliases_flattened.json",
+) -> None:
+
+    """
+        Loading JSON that has alias / acronym to country name mapping.
+
+        Args:
+            download_url (:obj:`str`, optional): The URL from where the .json containing the alias-to-country mapping can be fetched. 
+
+        Returns:
+            json converted to :obj:`dict` if the `download_url` could be fetched and read, None otherwise.
+
+    """
+
+    with urllib.request.urlopen(download_url) as url:
+        return json.loads(url.read().decode()) if url.getcode() == 200 else {}
+
+
+country_acronym_lookup = make_dict_lowercase(load_country_acryonym_json())
+
+
+def acronym_to_country(acronym):
+    """
+        Retrieve country name from `acronym` using `country_acronym_lookup` as reference
+
+        Args:
+            acryonym (:obj:`str`): acronym for which a country has to be searched
+        
+        Returns:
+            str: the `country`  mapped to `acronym` if such a mapping is found.
+                 the `acronym` if no mapping is found
+    """
+    country = country_acronym_lookup.get(acronym.lower())
+    return country.title() if country != None else acronym.title()
+
+
 with urllib.request.urlopen(
     "https://raw.githubusercontent.com/bhanuc/indian-list/master/state-city.json"
 ) as url:
@@ -72,7 +128,7 @@ def extract_travel_place(doc):
     for ent in doc.ents:
         if ent._.travel_status:
             travel.append(ent.text)
-    return travel
+    return list(map(acronym_to_country, travel))
 
 
 def extract_nationality(doc):
@@ -87,7 +143,12 @@ def extract_foreign(doc):
     is_foreign = []
     for ent in doc.ents:
         if ent._.travel_status:
-            is_foreign.append({"place": ent.text, "is_foreign": not (ent.text in l)})
+            is_foreign.append(
+                {
+                    "place": acronym_to_country(ent.text),
+                    "is_foreign": not (ent.text in l),
+                }
+            )
     return is_foreign
 
 
@@ -131,7 +192,6 @@ def process_records(records):
             logger.info(
                 f"Travel Output : {r['patientId']}: {record_processor(r['notes'])}"
             )
-
     return {"patients": history}
 
 
@@ -151,4 +211,6 @@ def single():
     return results
 
 
+#if __name__ == "__main__":
+#    app.run()
 # app.run()

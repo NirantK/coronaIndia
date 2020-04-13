@@ -17,15 +17,6 @@ logging.basicConfig(
 logging.info("Logger Setup Complete")
 
 
-def make_dir():
-    """Responsible for creating the folder in which the CSV's will
-    be stored in.
-    """
-    sheets_dir = pathlib.Path.cwd() / "Sheets"
-
-    if not sheets_dir.is_dir():
-        sheets_dir.mkdir()
-
 def geocode_df(df, gmaps, use_column):
     addresses = df[use_column].tolist()
     count = 0
@@ -62,12 +53,11 @@ def geocode_df(df, gmaps, use_column):
 def geocode_json(data_file, gmaps, use_column):
     json_name = pathlib.Path.cwd() / data_file
     df = pd.read_json(json_name)
-    
+
     total_none_count = 0
     total_overall_count = 0
 
     logging.info(f"Starting to geocode json - {data_file}")
-    
 
     df, count, total_count = geocode_df(df, gmaps, use_column)
     logging.info(f"Saving {data_file} with geocoded address")
@@ -112,14 +102,14 @@ def geocode(data_file, api_key, use_column="Address"):
         api_key (str): API key for Google Map Geocoding API
         use_column (str, optional): The column that is to be used as input to API while geocoding. Defaults to "Address".
     """
-    make_dir()
+    (pathlib.Path.cwd() / "Sheets").mkdir(parents=True, exist_ok=True)
     gmaps = googlemaps.Client(key=api_key)
 
     if data_file.endswith(".json"):
         geocode_json(data_file, gmaps, use_column)
     else:
         geocode_excel_sheet(data_file, gmaps, use_column)
-   
+
 
 if __name__ == "__main__":
     fire.Fire(geocode)

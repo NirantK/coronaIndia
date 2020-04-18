@@ -27,7 +27,8 @@ def send_reverese_geocoding_request(lat, lng, gmaps):
         gmaps (Object): gmaps object with declared API key
     
     Returns:
-        dict: Response recieved from API
+        dict: Response recieved from API,
+        bool: Whether we could connect to API
     """
     successful_api_hit = True
     try:
@@ -68,7 +69,8 @@ def reverse_geocode(csv_sheet, api_key, output_file="AssamPincode.csv"):
         output_file (str, optional): Name of the new CSV to be stored as. Defaults to 'AssamNewAddressPincode'.
     """
     gmaps = googlemaps.Client(key=api_key)
-    csv_sheet = pathlib.Path.cwd() / csv_sheet
+    csv_sheet = pathlib.Path(csv_sheet)
+    csv_sheet = csv_sheet.resolve()
     df = pd.read_csv(csv_sheet)
     lats, lngs = df["Latitude"].tolist(), df["Longitude"].tolist()
     postal_codes, pincode_verify = [], []
@@ -118,28 +120,31 @@ def reverse_geocode(csv_sheet, api_key, output_file="AssamPincode.csv"):
         is_assam.append(False)
         return
 
-    test = [True, True, False, False, True]
-    index = 0
     for lat, lng in tqdm(zip(lats, lngs)):
+        # Verify that the current lat, lng is not nan.
         if verify_ifnan(lat, lng):
             continue
 
+        # Lat, Lng is not nan. It can sent to the GMaps Geocoding API for reverse geocoding.
+        # send_reverese_geocoding_request will do that and return the raw response back.
         reverse_geocode_result, successful_api_hit = send_reverese_geocoding_request(
             lat, lng, gmaps
         )
 
-        successful_api_hit = test[index]
-        index += 1
-
+        # Make sure that we were able to successfully connect to the GMaps API and got a valid
+        # response back.
         if not successful_api_hit:
             pincode_verify.append(False)
             postal_codes.append(None)
             is_assam.append(None)
-            logging.info("Here??")
             continue
 
+        # Valid respoonse was srecieved after successfully connecting to the API
         pincode_verify.append(True)
 
+        # Clean the raw response recieved from the GMaps geocoding API. Filter out all the possible pincodes
+        # sent back by the API. Out of all the codes pick the first pincode that matches an Assam pincode
+        # (Assam pincode - starts with '7'). If no Assam pincode found mark it false for is_assam and pick the first pincode.
         try:
             codes = retrieve_pincodes_from_response(reverse_geocode_result)
             get_required_code(codes)

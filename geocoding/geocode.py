@@ -51,7 +51,7 @@ def geocode_df(df, gmaps, use_column):
 
 
 def geocode_json(data_file, gmaps, use_column):
-    json_name = pathlib.Path.cwd() / data_file
+    json_name = data_file.resolve()
     df = pd.read_json(json_name)
 
     total_none_count = 0
@@ -71,9 +71,9 @@ def geocode_json(data_file, gmaps, use_column):
 
 
 def geocode_excel_sheet(data_file, gmaps, use_column):
-    xlsx_name = pathlib.Path.cwd() / data_file
-    temp = pd.ExcelFile(xlsx_name)
-    sheet_names = temp.sheet_names
+    xlsx_name = data_file.resolve()
+    xl_pd_buffer = pd.ExcelFile(xlsx_name)
+    sheet_names = xl_pd_buffer.sheet_names
 
     total_xlsx_count = 0
     total_none_count = 0
@@ -102,12 +102,13 @@ def geocode(data_file, api_key, use_column="Address"):
         api_key (str): API key for Google Map Geocoding API
         use_column (str, optional): The column that is to be used as input to API while geocoding. Defaults to "Address".
     """
-    (pathlib.Path.cwd() / "Sheets").mkdir(parents=True, exist_ok=True)
+    (pathlib.Path.cwd() / "Sheets").mkdir(parents=True, exist_ok=True) # make directory "Sheets" if it does not exist
     gmaps = googlemaps.Client(key=api_key)
+    data_file = pathlib.Path(data_file)
 
     if data_file.endswith(".json"):
         geocode_json(data_file, gmaps, use_column)
-    else:
+    elif data_file.endswith(".xlsx") or data_file.endswith(".xls"):
         geocode_excel_sheet(data_file, gmaps, use_column)
 
 

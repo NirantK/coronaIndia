@@ -30,14 +30,14 @@ def send_reverese_geocoding_request(lat, lng, gmaps):
         dict: Response recieved from API,
         bool: Whether we could connect to API
     """
-    successful_api_hit = True
+    valid_data_recieved = True
     try:
         reverse_geocode_result = gmaps.reverse_geocode((lat, lng))
     except:
         logging.warning(f"Failure in reaching the API - {(lat,lng)}")
-        successful_api_hit = False
+        valid_data_recieved = False
         reverse_geocode_result = None
-    return reverse_geocode_result, successful_api_hit
+    return reverse_geocode_result, valid_data_recieved
 
 
 def retrieve_pincodes_from_response(reverse_geocode_result):
@@ -127,13 +127,13 @@ def reverse_geocode(csv_sheet, api_key, output_file="AssamPincode.csv"):
 
         # Lat, Lng is not nan. It can sent to the GMaps Geocoding API for reverse geocoding.
         # send_reverese_geocoding_request will do that and return the raw response back.
-        reverse_geocode_result, successful_api_hit = send_reverese_geocoding_request(
+        reverse_geocode_result, valid_data_recieved = send_reverese_geocoding_request(
             lat, lng, gmaps
         )
 
         # Make sure that we were able to successfully connect to the GMaps API and got a valid
         # response back.
-        if not successful_api_hit:
+        if not valid_data_recieved:
             pincode_verify.append(False)
             postal_codes.append(None)
             is_assam.append(None)

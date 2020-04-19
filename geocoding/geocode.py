@@ -1,4 +1,4 @@
-import logging
+from logger import get_logger
 import pathlib
 
 import fire
@@ -6,13 +6,7 @@ import googlemaps
 import pandas as pd
 from tqdm import tqdm
 
-logging.basicConfig(
-    filename="geocoding.log",
-    filemode="a",
-    format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-    datefmt="%H:%M:%S",
-    level=logging.INFO,
-)
+logging = get_logger("geocoding_logs")
 
 logging.info("Logger Setup Complete")
 

@@ -1,5 +1,6 @@
 library(jsonlite)
 library(magrittr)
+library(sos)
 library(dplyr)
 library(fGarch)
 library(NobBS)
@@ -17,26 +18,30 @@ colnames(districts_df) <- c("district")
 
 # cleaning up patient data to remove tourist related data and retaining only the columns needed
 patient_clean_df = merge(x=districts_df, y=raw_patient_df, by.x='district', by.y='raw_data.detecteddistrict')
-patient_data <- patient_clean_df %>% select(district, raw_data.dateannounced, raw_data.gender)
-patient_data_reliable <- patient_data %>% filter(raw_data.dateannounced >= "01/03/2020")
+patient_data <- patient_clean_df %>% select(district, raw_data.dateannounced)
 
 #### Calculation of onset date based on announcement date
-num_patients <- nrow(patient_data_reliable)
+num_patients <- nrow(patient_data)
 # Using Skewed Gaussian with a mean of 14 days and standard deviation 1 to get the incubation time
-incubation_times <- floor(rsnorm(num_patients, mean=14, sd=1, xi=-10))
+mu = 9
+incubation_times <- floor(rsnorm(num_patients, mean=mu, sd=4, xi=-3))
+# removing negative values by adding mean to them 
+incubation_times[incubation_times<0] <- incubation_times[incubation_times<0] + mu
 # Using Uniform Random sample in the interval of [1-3] to get the testing time
 testing_time <- floor(runif(num_patients, min=1, max=4))
 delay <- incubation_times + testing_time
-onset_date <- as.Date(patient_data_reliable$raw_data.dateannounced, format ="%d/%m/%Y") - delay
+onset_date <- as.Date(patient_data$raw_data.dateannounced, format ="%d/%m/%Y") - delay
 
 # Create dataframe for all districts
-report_date <- as.Date(patient_data_reliable$raw_data.dateannounced, format="%d/%m/%Y")
-district <- patient_data_reliable$district
+report_date <- as.Date(patient_data$raw_data.dateannounced, format="%d/%m/%Y")
+district <- patient_data$district
 all_districts_data <- data.frame(district, onset_date, report_date)
 # Example output of all_districts_data
 # district  onset_date  report_date
-# Adilabad	2020-04-05	2020-04-19
-# Adilabad	2020-03-24	2020-04-10
+# Adilabad	2020-03-27	2020-04-10
+# Adilabad	2020-03-27	2020-04-10
+# Adilabad	2020-03-27	2020-04-10
+# Adilabad	2020-04-04	2020-04-19
 
 
 

@@ -33,6 +33,10 @@ onset_date <- as.Date(patient_data_reliable$raw_data.dateannounced, format ="%d/
 report_date <- as.Date(patient_data_reliable$raw_data.dateannounced, format="%d/%m/%Y")
 district <- patient_data_reliable$district
 all_districts_data <- data.frame(district, onset_date, report_date)
+# Example output of all_districts_data
+# district  onset_date  report_date
+# Adilabad	2020-04-05	2020-04-19
+# Adilabad	2020-03-24	2020-04-10
 
 
 

@@ -34,6 +34,6 @@ termcolor==1.1.0
 toml==0.10.0
 tqdm==4.45.0
 typed-ast==1.4.1
-urllib3==1.25.8
+urllib3==1.26.5
 xlrd==1.2.0
 XlsxWriter==1.2.8
